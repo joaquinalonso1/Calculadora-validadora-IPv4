@@ -12,7 +12,7 @@
         button:hover { background-color: #0056b3; }
         .error { color: #ff4d4d; margin-top: 15px; font-weight: bold; }
         .success { color: #4CAF50; margin-top: 15px; font-weight: bold; }
-        .resultados { text-align: left; margin-top: 25px; background-color: #3d3d3d; padding: 20px; border-radius: 5px; front-size: 20px; line-height: 1.6; }
+        .resultados { text-align: left; margin-top: 25px; background-color: #3d3d3d; padding: 20px; border-radius: 5px; font-size: 25px; line-height: 2.0; }
         p { margin: 10px 0; }
     </style>
 </head>
@@ -32,6 +32,7 @@
         {% if resultados %}
             <p class="success">✅ Cálculo exitoso</p>
             <div class="resultados">
+                <p><strong>Clase:</strong> {{ resultados.clase }}</p>
                 <p><strong>Red:</strong> {{ resultados.red }}</p>
                 <p><strong>Máscara:</strong> {{ resultados.mascara }}</p>
                 <p><strong>Rango de IPs:</strong> {{ resultados.rango }}</p>

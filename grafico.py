@@ -96,6 +96,23 @@ def calcular_broadcast(ip_texto, mascara_texto):
     return direccion_broadcast
 
 
+def calcular_clase_ip(ip):
+    primer_octeto = int(ip.split('.')[0])
+    if 1 <= primer_octeto <= 127:
+        return "Clase A"
+    elif 128 <= primer_octeto <= 191:
+        return "Clase B"
+    elif 192 <= primer_octeto <= 223:
+        return "Clase C"
+    elif 224 <= primer_octeto <= 239:
+        return "Clase D (Multicast)"
+    elif 240 <= primer_octeto <= 255:
+        return "Clase E (Experimental)"
+    else:
+        return "Desconocida"
+
+
+
 
 # --- 2. EL PUENTE ENTRE LA GRÁFICA Y LA LÓGICA ---
 def procesar_calculo():
@@ -132,14 +149,30 @@ def procesar_calculo():
             
         # --- ZONA DE CÁLCULO ---
         # Llamá a tus funciones como hacías en el while
+        clase_ip = calcular_clase_ip(ip_sola)
+        
+        # --- CÁLCULO DEL RANGO ---
+    
         mascara_decimal = calcular_mascara(numero2)
         red_calculada = calcular_direccion_red(ip_sola, mascara_decimal)
         broadcast_calculado = calcular_broadcast(ip_sola, mascara_decimal)
         hosts = 2**(32 - numero2) - 2
+        partes_red = red_calculada.split('.')
+        primer_host = f"{partes_red[0]}.{partes_red[1]}.{partes_red[2]}.{int(partes_red[3]) + 1}"
+        
+        partes_broad = broadcast_calculado.split('.')
+        ultimo_host = f"{partes_broad[0]}.{partes_broad[1]}.{partes_broad[2]}.{int(partes_broad[3]) - 1}"
+        
+        rango = f"{primer_host} - {ultimo_host}"
+        if hosts <= 0:
+            rango = "No hay hosts utilizables (/31 o /32)"
         
         # --- ACTUALIZACIÓN VISUAL ---
         # Si llegó hasta acá, todo es un éxito. Inyectamos los datos en la interfaz.
         label_estado.configure(text="✅ Cálculo exitoso", text_color="green")
+        label_clase.configure(text=f"Clase: {clase_ip}")
+        label_mascara.configure(text=f"Máscara: {mascara_decimal}")
+        label_rango.configure(text=f"Rango de IPs: {rango}")
         label_red.configure(text=f"Red: {red_calculada}")
         label_broadcast.configure(text=f"Broadcast: {broadcast_calculado}")
         label_hosts.configure(text=f"Hosts utilizables: {hosts}")
@@ -147,6 +180,8 @@ def procesar_calculo():
     else:
         # Si validar_ip() devolvió False
         label_estado.configure(text="❌ Error: Dirección IP inválida.", text_color="red")
+
+
 
 
 # --- 3. DISEÑO VISUAL DE LA VENTANA ---
@@ -173,6 +208,16 @@ boton_calcular.pack(pady=20)
 # Etiquetas de resultados (arrancan con guiones)
 label_estado = ctk.CTkLabel(ventana, text="", text_color="yellow")
 label_estado.pack(pady=5)
+
+# Etiqueta inicial para mostrar la Clase de IP
+label_clase = ctk.CTkLabel(ventana, text="Clase: -", font=("Arial", 14))
+label_clase.pack(pady=5)
+
+label_mascara = ctk.CTkLabel(ventana, text="Máscara: -", font=("Arial", 14))
+label_mascara.pack(pady=5)
+
+label_rango = ctk.CTkLabel(ventana, text="Rango de IPs: -", font=("Arial", 14))
+label_rango.pack(pady=5)
 
 label_red = ctk.CTkLabel(ventana, text="Red: -", font=("Roboto", 14))
 label_red.pack(pady=5)

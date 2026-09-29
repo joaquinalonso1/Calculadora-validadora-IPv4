@@ -92,7 +92,20 @@ def calcular_broadcast(ip_texto, mascara_texto):
     direccion_broadcast= f"{broadcast1}.{broadcast2}.{broadcast3}.{broadcast4}"   
     return direccion_broadcast
 
-
+def calcular_clase_ip(ip):
+    primer_octeto = int(ip.split('.')[0])
+    if 1 <= primer_octeto <= 127:
+        return "Clase A"
+    elif 128 <= primer_octeto <= 191:
+        return "Clase B"
+    elif 192 <= primer_octeto <= 223:
+        return "Clase C"
+    elif 224 <= primer_octeto <= 239:
+        return "Clase D (Multicast)"
+    elif 240 <= primer_octeto <= 255:
+        return "Clase E (Experimental)"
+    else:
+        return "Desconocida"
 
 
 
@@ -117,6 +130,7 @@ while True:
             print(f"{mascara_sola} no es una máscara de subred válida.")
             continue
         print(f" Exito: IP {ip_sola} y mascara /{mascara_sola} son válidas.")
+        print(f" La clase de la IP es: {calcular_clase_ip(ip_sola)}")
         mascara_decimal= calcular_mascara(numero2)
         print(f" La máscara de subred en formato decimal es: {mascara_decimal}")
         red_calculada= calcular_direccion_red(ip_sola, mascara_decimal)
