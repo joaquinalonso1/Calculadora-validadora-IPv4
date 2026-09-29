@@ -120,14 +120,28 @@ def index():
                 else:
                     numero2 = int(mascara_sola)
                     # --- ZONA DE CÁLCULO ---
+                    # --- ZONA DE CÁLCULO ---
                     mascara_decimal = calcular_mascara(numero2)
                     red = calcular_direccion_red(ip_sola, mascara_decimal)
                     broadcast = calcular_broadcast(ip_sola, mascara_decimal)
                     hosts = 2**(32 - numero2) - 2
                     
-                    # Empaquetamos los datos exitosos para mandarlos al HTML
+                    # NUEVO: Calculamos el rango de IPs
+                    partes_red = red.split('.')
+                    primer_host = f"{partes_red[0]}.{partes_red[1]}.{partes_red[2]}.{int(partes_red[3]) + 1}"
+                    
+                    partes_broad = broadcast.split('.')
+                    ultimo_host = f"{partes_broad[0]}.{partes_broad[1]}.{partes_broad[2]}.{int(partes_broad[3]) - 1}"
+                    
+                    rango = f"{primer_host} - {ultimo_host}"
+                    if hosts <= 0:
+                        rango = "No hay hosts utilizables (/31 o /32)"
+
+                    # Empaquetamos TODOS los datos para mandarlos al HTML
                     resultados = {
                         "red": red,
+                        "mascara": mascara_decimal,
+                        "rango": rango,
                         "broadcast": broadcast,
                         "hosts": hosts
                     }
